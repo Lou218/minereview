@@ -211,11 +211,6 @@
             background: var(--accent-light);
         }
 
-        .card-review-btn:disabled {
-            background: #555;
-            cursor: not-allowed;
-        }
-
         #detail-page {
             display: none;
             max-width: 900px;
@@ -572,28 +567,27 @@
     </footer>
 
     <script>
-        // ===== БЕЗОПАСНЫЕ ССЫЛКИ НА ЛОГОТИПЫ (вшиты в код, не зависят от интернета) =====
-        // Для отображения в любом окружении используем SVG с эмодзи/цветами в качестве fallback
+        // ================= БЕЗОПАСНЫЕ SVG ЛОГОТИПЫ (Не зависят от интернета) =================
         const imgPlaceholder = (bg, text) => `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='${bg}'/><text x='50' y='55' font-size='30' text-anchor='middle' fill='white'>${text}</text></svg>`;
         
         const logos = {
-            official: imgPlaceholder('green', 'M'), // Крипер
-            zlauncher: imgPlaceholder('brown', 'Z'), // Z
-            legacy: imgPlaceholder('black', 'L'), // Legacy
-            tl: imgPlaceholder('blue', 'TL'), // TL
-            modrinth: imgPlaceholder('green', 'M'), // Modrinth
-            prism: imgPlaceholder('purple', 'P'), // Prism
-            multimc: imgPlaceholder('green', 'M'), // MultiMC
-            kl: imgPlaceholder('red', 'KL'), // KL
-            xmcl: imgPlaceholder('purple', 'X'), // XMCL
-            mister: imgPlaceholder('darkgreen', 'M'), // Mister
-            xlauncher: imgPlaceholder('dark', 'X'), // XLauncher
-            sk: imgPlaceholder('purple', 'SK'), // SK
-            hmcl: imgPlaceholder('brown', 'H'), // HMCL
-            flauncher: imgPlaceholder('gradient', 'FL'), // FLauncher
-            nlauncher: imgPlaceholder('gray', 'N'), // NLauncher
-            rulauncher: imgPlaceholder('darkblue', 'Ru'), // RuLauncher
-            vlauncher: imgPlaceholder('purple', 'V') // VLauncher
+            official: imgPlaceholder('green', 'M'),
+            zlauncher: imgPlaceholder('brown', 'Z'),
+            legacy: imgPlaceholder('black', 'L'),
+            tl: imgPlaceholder('blue', 'TL'),
+            modrinth: imgPlaceholder('green', 'M'),
+            prism: imgPlaceholder('purple', 'P'),
+            multimc: imgPlaceholder('green', 'M'),
+            kl: imgPlaceholder('red', 'KL'),
+            xmcl: imgPlaceholder('purple', 'X'),
+            mister: imgPlaceholder('darkgreen', 'M'),
+            xlauncher: imgPlaceholder('dark', 'X'),
+            sk: imgPlaceholder('purple', 'SK'),
+            hmcl: imgPlaceholder('brown', 'H'),
+            flauncher: imgPlaceholder('gradient', 'FL'),
+            nlauncher: imgPlaceholder('gray', 'N'),
+            rulauncher: imgPlaceholder('darkblue', 'Ru'),
+            vlauncher: imgPlaceholder('purple', 'V')
         };
 
         // ================= ДАННЫЕ С РЕАЛЬНЫМИ ОТЗЫВАМИ =================
@@ -989,7 +983,7 @@
                             <div class="total-votes">${count} оценок</div>
                         </div>
                         <p class="short-desc">${data.description.substring(0, 70)}...</p>
-                        <button class="card-review-btn" onclick="event.stopPropagation(); openDetailPage(key)"><i class="fas fa-comments"></i> Смотреть отзывы</button>
+                        <button class="card-review-btn" onclick="openDetailPage(key)"><i class="fas fa-comments"></i> Смотреть отзывы</button>
                     `;
                     list.appendChild(card);
                 }
