@@ -567,9 +567,9 @@
     </footer>
 
     <script>
-        // ================= БЕЗОПАСНЫЕ SVG ЛОГОТИПЫ (Не зависят от интернета) =================
+        // ================= БЕЗОПАСНЫЕ SVG ЛОГОТИПЫ =================
         const imgPlaceholder = (bg, text) => `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='${bg}'/><text x='50' y='55' font-size='30' text-anchor='middle' fill='white'>${text}</text></svg>`;
-        
+
         const logos = {
             official: imgPlaceholder('green', 'M'),
             zlauncher: imgPlaceholder('brown', 'Z'),
@@ -587,7 +587,8 @@
             flauncher: imgPlaceholder('gradient', 'FL'),
             nlauncher: imgPlaceholder('gray', 'N'),
             rulauncher: imgPlaceholder('darkblue', 'Ru'),
-            vlauncher: imgPlaceholder('purple', 'V')
+            vlauncher: imgPlaceholder('purple', 'V'),
+            easylauncher: imgPlaceholder('orange', 'E')
         };
 
         // ================= ДАННЫЕ С РЕАЛЬНЫМИ ОТЗЫВАМИ =================
@@ -647,6 +648,20 @@
                 reviews: [
                     { name: 'Herobrine_Fan', date: '05.02.2026', rating: 4, text: 'В целом хороший лаунчер, много сборок, удобно заходить на любые сервера. Но будьте осторожны, качайте только с официального сайта!' },
                     { name: 'Master_MC', date: '19.03.2026', rating: 3, text: 'Топ для игры с друзьями, но бесит, что в фоне постоянно что-то качается. Подозреваю, что собирает данные.' }
+                ]
+            },
+            'easylauncher': {
+                name: 'EasyLauncher',
+                tag: 'Лицензия / Для модов',
+                category: 'license mods',
+                logo: logos.easylauncher,
+                description: 'Современный, стильный и функциональный лаунчер для Minecraft. Поддерживает установку сборок и модов на Windows, Linux и macOS. Работает с официальными аккаунтами Microsoft и поддерживает HD-скины через сервис EasyX.',
+                pros: ['Современный и удобный интерфейс', 'Поддержка сборок и модов', 'Кроссплатформенность (Windows, Linux, macOS)'],
+                cons: ['Много фейковых сайтов с фишингом', 'Требует Microsoft-аккаунт для полной работы'],
+                ratings: [4, 5, 4, 4, 5, 4],
+                reviews: [
+                    { name: 'EasyLover', date: '15.03.2026', rating: 5, text: 'Очень удобный лаунчер! Ставит любые сборки в пару кликов, а подписка на HD-скины — приятный бонус.' },
+                    { name: 'Modder_Pro', date: '20.04.2026', rating: 4, text: 'Лучший вариант для игры с друзьями, если нужно ставить сборки автоматически. Но качайте только с официальных страниц!' }
                 ]
             },
             'modrinth': {
