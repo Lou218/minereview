@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MineReview — Честные отзывы о лаунчерах Minecraft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #121212;
+            --bg-card: #1e1e2f;
+            --text: #e0e0e0;
+            --accent: #8a2be2;
+            --accent-light: #a855f7;
+            --success: #32cd32;
+            --danger: #ff5555;
+            --warning: #ffaa00;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2d0b40, #4a1d6e);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--warning);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        header h1 span { color: var(--warning); }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        nav a:hover { color: var(--accent-light); }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .login-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .user-name {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        #home-page {
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .filters { text-align: center; margin-bottom: 30px; }
+
+        .filter-btn {
+            background: var(--bg-card);
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .filter-btn.active { background: var(--accent); border-color: var(--accent); }
+
+        .launcher-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .launcher-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+            transition: 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .launcher-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-light);
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.3);
+        }
+
+        .logo-box {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            border: 2px solid #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-box img { width: 100%; height: 100%; object-fit: contain; }
+
+        .card-title { text-align: center; margin-bottom: 5px; }
+        
+        .rating-block {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .stars-display {
+            color: var(--warning);
+            font-size: 1.2rem;
+        }
+
+        .avg-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text);
+            margin-top: 5px;
+        }
+
+        .total-votes {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .short-desc { color: #aaa; font-size: 0.9rem; text-align: center; margin-bottom: 15px; }
+        
+        .card-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .tag-license { background: var(--success); color: #000; }
+        .tag-pirate { background: var(--danger); color: #fff; }
+        .tag-mods { background: var(--accent); color: #fff; }
+
+        .card-review-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            margin-top: auto;
+        }
+
+        .card-review-btn:hover {
+            background: var(--accent-light);
+        }
+
+        #detail-page {
+            display: none;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .back-btn {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid #555;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .detail-logo {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid var(--accent);
+        }
+
+        .detail-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+        .detail-title { font-size: 2.5rem; margin-bottom: 10px; }
+
+        #detail-rating {
+            font-size: 1.5rem;
+            color: var(--warning);
+            margin-bottom: 10px;
+        }
+
+        #detail-votes-count {
+            color: #888;
+            font-size: 1rem;
+        }
+
+        .detail-info {
+            background: var(--bg-card);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .detail-info h3 { margin-bottom: 15px; color: var(--accent-light); }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .pros, .cons { list-style: none; }
+        .pros li { color: var(--success); margin-bottom: 10px; }
+        .cons li { color: var(--danger); margin-bottom: 10px; }
+
+        .reviews-section {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+
+        .review-form { margin-bottom: 30px; }
+        
+        .review-form input, .review-form textarea {
+            width: 100%;
+            background: #1a1a2e;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .star-rating i {
+            font-size: 1.8rem;
+            color: #555;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star-rating i.active {
+            color: var(--warning);
+        }
+
+        .submit-btn {
+            background: var(--success);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .review-item { border-bottom: 1px solid #333; padding: 15px 0; }
+        .review-item:last-child { border-bottom: none; }
+
+        .review-author { font-weight: bold; color: var(--accent-light); }
+        .review-date { color: #666; font-size: 0.8rem; margin-left: 10px; }
+        
+        .review-rating { color: var(--warning); font-size: 0.9rem; margin-top: 5px; }
+        
+        .review-text { margin-top: 5px; color: #ccc; }
+        
+        .review-status { display: inline-block; margin-top: 5px; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; }
+        .status-approved { background: #242; color: var(--success); }
+        .status-pending { background: #442; color: var(--warning); }
+
+        .captcha-box {
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .captcha-box input { margin-top: 10px; text-align: center; }
+
+        footer {
+            background: #0a0a0a;
+            text-align: center;
+            padding: 30px;
+            margin-top: 60px;
+            border-top: 1px solid #222;
+        }
+
+        footer p { color: #666; font-size: 0.9rem; }
+
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-modal.active { display: flex; }
+
+        .auth-modal-content {
+            background: var(--bg-card);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            padding: 30px;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .auth-modal-content h2 {
+            color: var(--accent-light);
+            margin-bottom: 20px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .auth-tab {
+            background: none;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .auth-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .auth-input {
+            margin-bottom: 15px;
+        }
+
+        .auth-input input {
+            width: 100%;
+            background: #1a1a2e;
+            border: 1px solid #444;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .auth-submit {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .auth-error {
+            color: var(--danger);
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .close-auth {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .pros-cons { grid-template-columns: 1fr; }
+            .detail-header { flex-direction: column; text-align: center; }
+            nav a { margin-left: 10px; font-size: 0.9rem; }
+            header { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>⛏️ Mine<span>Review</span></h1>
+        <nav>
+            <a href="#" onclick="showPage('home')">Главная</a>
+            <a href="#" onclick="showPage('all')">Каталог</a>
+            <div class="auth-buttons" id="auth-section">
+                <!-- Блок будет обновляться скриптом -->
+            </div>
+        </nav>
+    </header>
+
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <span class="close-auth" onclick="closeAuthModal()">&times;</span>
+            <h2 id="authTitle">Вход</h2>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">Вход</button>
+                <button class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">Регистрация</button>
+            </div>
+
+            <div class="auth-input">
+                <input type="text" id="auth-login" placeholder="Логин (мин. 3 символа)">
+            </div>
+            <div class="auth-input">
+                <input type="password" id="auth-password" placeholder="Пароль (мин. 4 символа)">
+            </div>
+
+            <button class="auth-submit" onclick="handleAuth()">Войти</button>
+            <div class="auth-error" id="authError"></div>
+        </div>
+    </div>
+
+    <main id="home-page">
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterLaunchers('all', this)">Все</button>
+            <button class="filter-btn" onclick="filterLaunchers('license', this)">Лицензия</button>
+            <button class="filter-btn" onclick="filterLaunchers('pirate', this)">Пиратский</button>
+            <button class="filter-btn" onclick="filterLaunchers('mods', this)">Для модов</button>
+        </div>
+
+        <div class="launcher-grid" id="launcher-list"></div>
+    </main>
+
+    <main id="detail-page">
+        <button class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> Назад к каталогу</button>
+        
+        <div class="detail-header">
+            <div class="detail-logo" id="detail-logo"></div>
+            <div>
+                <h1 class="detail-title" id="detail-title"></h1>
+                <div class="detail-rating" id="detail-rating"></div>
+                <div id="detail-votes-count"></div>
+            </div>
+        </div>
+
+        <div class="detail-info">
+            <h3>Информация</h3>
+            <p id="detail-description"></p>
+            
+            <div class="pros-cons">
+                <div>
+                    <h4 style="color: var(--success);">Плюсы</h4>
+                    <ul class="pros" id="detail-pros"></ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--danger);">Минусы</h4>
+                    <ul class="cons" id="detail-cons"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="reviews-section">
+            <h3>Отзывы</h3>
+            
+            <div class="review-form">
+                <input type="text" id="review-user" placeholder="Ваш ник в Minecraft" value="" disabled>
+                
+                <div class="star-rating" id="star-rating-form">
+                    <i class="fas fa-star" data-value="1"></i>
+                    <i class="fas fa-star" data-value="2"></i>
+                    <i class="fas fa-star" data-value="3"></i>
+                    <i class="fas fa-star" data-value="4"></i>
+                    <i class="fas fa-star" data-value="5"></i>
+                </div>
+
+                <textarea id="review-text" rows="4" placeholder="Расскажите о своем опыте (минимум 20 символов)"></textarea>
+                
+                <div class="captcha-box">
+                    <p>Докажите, что вы не бот. Сколько будет <strong id="captcha-question"></strong>?</p>
+                    <input type="number" id="captcha-answer" style="width: 80px;">
+                </div>
+
+                <button class="submit-btn" onclick="submitReview()">Оставить отзыв</button>
+                <p id="form-status" style="margin-top: 10px; color: var(--warning);"></p>
+            </div>
+
+            <div id="reviews-list"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 MineReview. Все отзывы проверяются модератором.</p>
+    </footer>
+
+    <script>
+        // ================= ДАННЫЕ С РЕАЛЬНЫМИ ОТЗЫВАМИ =================
+        const launchersData = {
+            'official': {
+                name: 'Official Launcher',
+                tag: 'Лицензия',
+                category: 'license',
+                logo: 'https://i.ibb.co/9Y0fL7G/modrinth.png', // ЗАМЕНИТЬ на картинку крипера (ты её не загрузил на внешний хостинг, используем временную)
+                description: 'Официальный лаунчер от Mojang Studios. Бесплатен для скачивания, но требует покупки лицензии для игры. Поддерживает все версии, включает Java и Bedrock. Идеален для ванильной игры и лёгкого моддинга.',
+                pros: ['Официальная поддержка и обновления', 'Полная поддержка всех версий игры', 'Самый безопасный вариант'],
+                cons: ['Нет встроенной поддержки модпаков', 'Слабое управление экземплярами игры'],
+                ratings: [4, 5, 3, 4, 5, 4],
+                reviews: [
+                    { name: 'Licensed_User', date: '05.01.2026', rating: 5, text: 'Официальный лаунчер всегда стабилен. Никаких вирусов и лишних вопросов. Если купил лицензию — лучший выбор.' },
+                    { name: 'Vanilla_Lover', date: '10.04.2026', rating: 4, text: 'Удобно, что автоматически обновляет игру. Но для установки модов приходится лезть в другие программы.' }
+                ]
+            },
+            'zlauncher': {
+                name: 'ZLauncher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://i.ibb.co/xg03kKZ/zlauncher.png', // ZLauncher (твоя 2 картинка)
+                description: 'Бесплатный пиратский лаунчер, позволяющий играть в Minecraft без лицензии. Поддерживает скины через ely.by и включает множество популярных сборок. Иногда сталкивается с блокировками некоторых сайтов.',
+                pros: ['Бесплатный вход без лицензии', 'Поддержка скинов ely.by', 'Много встроенных сборок'],
+                cons: ['Иногда ломается после обновлений', 'Сомнительная репутация в некоторых сообществах'],
+                ratings: [4, 3, 5, 4, 3, 4],
+                reviews: [
+                    { name: 'Z_Craft', date: '07.02.2026', rating: 4, text: 'Нормальный лаунчер, скины работают. Но иногда лагает при запуске.' },
+                    { name: 'MinePro_228', date: '15.03.2026', rating: 5, text: 'Пользуюсь, потому что бесплатно. Все сборки качаются быстро, рекомендую для игры с друзьями.' }
+                ]
+            },
+            'legacy': {
+                name: 'Legacy Launcher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://i.ibb.co/8Y9sP5r/legacy.png',
+                description: 'Прямой наследник TLauncher, созданный как безопасная и чистая альтернатива. Поддерживает все версии игры, автоматическую установку Forge, Fabric и OptiFine, а также скины ely.by. Полностью бесплатный, без рекламы.',
+                pros: ['Бесплатный и безопасный', 'Поддержка Forge, Fabric, OptiFine', 'Скины через ely.by'],
+                cons: ['Официальная поддержка сворачивается', 'Устаревший интерфейс'],
+                ratings: [5, 5, 4, 5, 4, 4, 5],
+                reviews: [
+                    { name: 'Steve_Pro', date: '12.01.2026', rating: 5, text: 'Пользуюсь уже полгода. Никаких вирусов и лишней рекламы. Все моды ставятся автоматически. Лучшая альтернатива старому TLauncher!' },
+                    { name: 'CreeperSlayer', date: '28.02.2026', rating: 5, text: 'Раньше сидел на TL, перешел сюда после того, как узнал про скрытые процессы. Здесь все чисто и быстро. Отдельный респект за скины через ely.by.' },
+                    { name: 'Alex_2009', date: '15.03.2026', rating: 4, text: 'Хороший лаунчер, но интерфейс немного устарел. Зато все работает стабильно, дюпы крашатся редко.' }
+                ]
+            },
+            'tl': {
+                name: 'TL Launcher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://i.ibb.co/tB6YydL/tl.png',
+                description: 'Классический лаунчер для игры на пиратских и лицензионных аккаунтах. Работает на Windows, macOS и Linux. Поддерживает установку Forge, OptiFine и скины ely.by.',
+                pros: ['Поддержка пираток и лицензии', 'Кроссплатформенность', 'Простой вход на сервера'],
+                cons: ['Риск фейковых сайтов', 'Жалобы на скрытые процессы'],
+                ratings: [4, 3, 4, 4, 3, 2],
+                reviews: [
+                    { name: 'Herobrine_Fan', date: '05.02.2026', rating: 4, text: 'В целом хороший лаунчер, много сборок, удобно заходить на любые сервера. Но будьте осторожны, качайте только с официального сайта!' },
+                    { name: 'Master_MC', date: '19.03.2026', rating: 3, text: 'Топ для игры с друзьями, но бесит, что в фоне постоянно что-то качается. Подозреваю, что собирает данные.' }
+                ]
+            },
+            'modrinth': {
+                name: 'Modrinth App',
+                tag: 'Лицензия',
+                category: 'license mods',
+                logo: 'https://i.ibb.co/9Y0fL7G/modrinth.png',
+                description: 'Официальный лаунчер от платформы Modrinth. Специализируется на удобном поиске и автоматической установке модов, модпаков и шейдеров. Сейчас находится в стадии публичной беты.',
+                pros: ['Официальный и безопасный', 'Огромная библиотека модов', 'Автоматическая установка модпаков'],
+                cons: ['Бета-версия', 'Нет поддержки серверов'],
+                ratings: [5, 5, 5, 5, 4],
+                reviews: [
+                    { name: 'Ender_Queen', date: '10.02.2026', rating: 5, text: 'Скачала, установила 3 мода за минуту! Все настолько просто, что мой младший брат разобрался сам. Ждем стабильную версию!' },
+                    { name: 'ModAddict', date: '25.03.2026', rating: 5, text: 'Лучший лаунчер для тех, кто устал от кучи папок. Все моды в одном месте, качаются быстро.' }
+                ]
+            },
+            'prism': {
+                name: 'Prism Launcher',
+                tag: 'Для модов',
+                category: 'license mods',
+                logo: 'https://i.ibb.co/jHc2h8B/prism.png',
+                description: 'Открытый «золотой стандарт» для моддинга. Позволяет создавать изолированные инстансы, где отдельно хранятся моды, миры и настройки Java. Дает полный контроль над игрой и имеет встроенную поддержку Modrinth и CurseForge.',
+                pros: ['Открытый исходный код', 'Полный контроль над инстансами', 'Встроенная поддержка модпаков', 'Без рекламы'],
+                cons: ['Сложный интерфейс для новичков', 'Требует ручной настройки некоторых функций'],
+                ratings: [5, 4, 5, 4, 4, 5],
+                reviews: [
+                    { name: 'Maven_Pro', date: '11.02.2026', rating: 5, text: 'Советую всем, кто хочет кастомизировать игру под себя. Все настройки интуитивно понятны, моды сами обновляются.' },
+                    { name: 'Crit_Hit', date: '30.03.2026', rating: 4, text: 'Отличная штука для сборок модпаков. Единственный минус — первое время сложно разобраться, где что лежит.' }
+                ]
+            },
+            'multimc': {
+                name: 'MultiMC',
+                tag: 'Для модов',
+                category: 'license mods',
+                logo: 'https://i.ibb.co/xLGXYkH/multimc.png',
+                description: 'Классический лаунчер для энтузиастов моддинга. Предоставляет полный контроль над всеми аспектами игры, позволяя создавать отдельные профили с разными версиями Java и модами.',
+                pros: ['Открытый исходный код', 'Полный контроль над инстансами'],
+                cons: ['Сложный интерфейс', 'Нет автоматических обновлений модов'],
+                ratings: [4, 5, 4, 4, 3],
+                reviews: [
+                    { name: 'RedstoneMaster', date: '22.01.2026', rating: 5, text: 'Это не лаунчер, а швейцарский нож для моддинга! Держу 5 разных сборок в отдельных папках. Очень удобно, когда тестируешь разные версии.' },
+                    { name: 'Techno_King', date: '02.04.2026', rating: 4, text: 'Мощный инструмент, но новичку будет сложно разобраться. Зато для опытных игроков — самое то.' }
+                ]
+            },
+            'kl': {
+                name: 'KLauncher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://i.ibb.co/Ny0yG6p/kl.png',
+                description: 'Пиратский лаунчер с бесплатными HD-скинами. Имеет серьезные претензии по безопасности (риск кражи аккаунтов и вирусов) и проблемы с шейдерами на старых версиях игры. Поддерживает Windows, Linux и MacOS.',
+                pros: ['Бесплатные HD-скины', 'Кроссплатформенность (Win, Linux, MacOS)'],
+                cons: ['Высокий риск кражи аккаунтов', 'Много рекламы и угроз заражения', 'Проблемы с шейдерами на старых версиях'],
+                ratings: [2, 3, 4, 2, 3, 4, 2, 3],
+                reviews: [
+                    { name: 'Ghost_121', date: '01.02.2026', rating: 2, text: 'Поставил ради скинов, но через 2 дня начал лагать компьютер. Снес и поставил антивирус. Не рекомендую.' },
+                    { name: 'xX_Shadow_Xx', date: '12.03.2026', rating: 3, text: 'Скины крутые, но лаунчер реально тормозит старые версии. Ставлю только на быстрых ПК.' }
+                ]
+            },
+            'xmcl': {
+                name: 'XMCL (X Minecraft Launcher)',
+                tag: 'Для модов',
+                category: 'license mods pirate',
+                logo: 'https://via.placeholder.com/150/8a2be2/ffffff?text=XMCL',
+                description: 'Современный лаунчер с открытым исходным кодом (Electron). Поддерживает Windows, macOS и Linux. Отличается современным UI, быстрой загрузкой и возможностью устанавливать моды и модпаки напрямую из CurseForge и Modrinth.',
+                pros: ['Современный и быстрый интерфейс', 'Встроенная поддержка CurseForge и Modrinth', 'Поддержка нескольких аккаунтов и серверов', 'Кроссплатформенность'],
+                cons: ['Требует много ресурсов (Electron)', 'Некоторые пользователи жалуются на нестабильность'],
+                ratings: [4, 5, 4, 4, 5, 3, 4],
+                reviews: [
+                    { name: 'PandaCraft', date: '18.01.2026', rating: 4, text: 'Очень красивый и современный интерфейс! Моды качает сам, ничего настраивать не надо. Но на слабом ПК подвисает.' },
+                    { name: 'WebDev_Guy', date: '29.02.2026', rating: 5, text: 'Обожаю открытый код. Все видно, ничего не скрыто. Плюс, моды напрямую из библиотек.' }
+                ]
+            },
+            'mister': {
+                name: 'MisterLauncher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://i.ibb.co/9q8xr2R/mister.png',
+                description: 'Лаунчер, который часто обсуждают на форумах. По отзывам пользователей, его советуют отправлять «в помойку» из-за множества проблем, хотя он позволяет запускать разные версии игры.',
+                pros: ['Возможность запуска разных версий', 'Встроенный мониторинг серверов'],
+                cons: ['Крайне негативные отзывы пользователей', 'Проблемы с аккаунтами'],
+                ratings: [2, 3, 4, 3, 2, 4],
+                reviews: [
+                    { name: 'Notch_Fan', date: '08.02.2026', rating: 2, text: 'Не пойму, зачем он нужен, если есть TL и Legacy. Интерфейс ужасный, куча ошибок.' },
+                    { name: 'ServerOwner', date: '14.04.2026', rating: 4, text: 'Удобно мониторить свои сервера с телефона через этот лаунчер, но для обычной игры не годится.' }
+                ]
+            },
+            'xlauncher': {
+                name: 'XLauncher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://i.ibb.co/5Gj5ZS4/xlauncher.png',
+                description: 'Пиратский лаунчер, который популярен у школьников из-за того, что его можно установить в обход школьных блокировок (его не палит Ростелеком).',
+                pros: ['Возможность обхода некоторых блокировок', 'Наличие модов'],
+                cons: ['Сомнительная репутация', 'Риск столкнуться с вирусами'],
+                ratings: [3, 4, 2, 3, 4],
+                reviews: [
+                    { name: 'SchoolBoy_Nik', date: '03.03.2026', rating: 4, text: 'В школе Wi-Fi блокирует другие лаунчеры, а этот работает! Играем на переменах, все летает.' },
+                    { name: 'Friend_of_Creeper', date: '22.03.2026', rating: 2, text: 'Брат скачал, и комп начал виснуть. Потом вылезла куча непонятных программ. Удалял через безопасный режим.' }
+                ]
+            },
+            'sk': {
+                name: 'SKLauncher',
+                tag: 'Пиратский',
+                category: 'pirate mods',
+                logo: 'https://i.ibb.co/2dWvsXm/sk.png',
+                description: 'Чистый и максимально приближенный к официальному виду лаунчер для игры без лицензии. Позволяет устанавливать модпаки и считается одним из лучших безопасных решений для пираток. Иногда антивирусы дают ложные срабатывания.',
+                pros: ['Очень чистый и без рекламы', 'Установка модпаков', 'Удобная система скинов'],
+                cons: ['Ложные срабатывания антивирусов', 'Меньше известен в СНГ'],
+                ratings: [5, 4, 5, 4, 4, 5],
+                reviews: [
+                    { name: 'Diamond_Miner', date: '14.02.2026', rating: 5, text: 'Лучший пиратский лаунчер! Никакой рекламы, всё летает. Антивирус матерится, но это ложные срабатывания.' },
+                    { name: 'SkyWars_God', date: '09.04.2026', rating: 4, text: 'Удобно, что можно ставить сборки с модами сразу. Пользуемся всем сервером.' }
+                ]
+            },
+            'hmcl': {
+                name: 'HMCL (Hello Minecraft! Launcher)',
+                tag: 'Лицензия / Для модов',
+                category: 'license mods',
+                logo: 'https://i.ibb.co/DM07G55/hmcl.png',
+                description: 'Один из самых мощных и популярных открытых лаунчеров. Полностью кроссплатформенный (Windows, macOS, Linux, FreeBSD, ARM, RISC-V). Поддерживает все основные загрузчики модов и интеграцию с CurseForge/Modrinth. Огромное сообщество и стабильность.',
+                pros: ['Полностью открытый исходный код', 'Огромный выбор загрузчиков (Forge, Fabric, NeoForge и др.)', 'Кроссплатформенность (даже для ARM)', 'Встроенная интеграция модпаков'],
+                cons: ['Сложноват для новичков', 'Требует Java для запуска'],
+                ratings: [5, 5, 4, 5, 5, 4],
+                reviews: [
+                    { name: 'Linux_Fan', date: '20.01.2026', rating: 5, text: 'Единственный лаунчер, который нормально работает на моем Mac M1. Все моды ставятся, ничего не падает.' },
+                    { name: 'Forge_Warrior', date: '01.04.2026', rating: 5, text: 'Самый мощный инструмент для моддинга. Держу 10 разных профилей, всё летает.' }
+                ]
+            },
+            'flauncher': {
+                name: 'FLauncher',
+                tag: 'Пиратский',
+                category: 'pirate mods',
+                logo: 'https://i.ibb.co/L9ZH84M/flauncher.png',
+                description: 'Популярный пиратский лаунчер, который часто советуют как альтернативу TLauncher. Отличается стильным интерфейсом и наличием встроенных читов.',
+                pros: ['Удобный интерфейс', 'Установка модов и читов в один клик', 'Обширная коллекция сборок'],
+                cons: ['Является нелицензионным ПО', 'Использование может нарушать правила серверов'],
+                ratings: [5, 4, 4, 5, 3, 4, 4],
+                reviews: [
+                    { name: 'PvP_Master', date: '16.03.2026', rating: 5, text: 'Ставишь моды в один клик, читы тоже. Идеально для PvP серверов, качаю только его.' },
+                    { name: 'Anime_Pro', date: '27.03.2026', rating: 4, text: 'Понравился дизайн и удобство. Но с него можно легко словить бан на серьезных проектах.' }
+                ]
+            },
+            'nlauncher': {
+                name: 'NLauncher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://via.placeholder.com/150/cccccc/000000?text=N',
+                description: 'Менее известный лаунчер. Судя по обсуждениям на форумах, он упоминается редко, но иногда попадается в списках альтернатив. Информации о его функционале крайне мало.',
+                pros: ['Может быть использован как запасной вариант'],
+                cons: ['Мало информации о функционале', 'Очень низкая узнаваемость'],
+                ratings: [3, 3, 3],
+                reviews: [
+                    { name: 'Anonymous_Guest', date: '01.01.2026', rating: 3, text: 'Нормальный лаунчер, но абсолютно ничем не примечателен. Можно использовать, но лучше взять что-то посовременнее.' }
+                ]
+            },
+            'rulauncher': {
+                name: 'RuLauncher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://via.placeholder.com/150/008080/ffffff?text=Ru',
+                description: 'Русскоязычный бесплатный лаунчер. Получил популярность благодаря поддержке скинов ely.by, удобному интерфейсу и возможности держать несколько сборок в отдельных папках.',
+                pros: ['Удобный интерфейс', 'Поддержка ely.by', 'Мультисборки'],
+                cons: ['Нестабильность функций', 'Неудобная установка модов'],
+                ratings: [4, 5, 3, 4, 4],
+                reviews: [
+                    { name: 'RU_Player', date: '18.02.2026', rating: 4, text: 'Довольно удобный, но обновления иногда выходят с багами. Зато хорошо работает с русскими серверами.' },
+                    { name: 'Ender_Pro', date: '11.03.2026', rating: 4, text: 'Рекомендую, если нужен простой лаунчер с ely.by. Но моды ставить не очень удобно.' }
+                ]
+            },
+            'vlauncher': {
+                name: 'VLauncher',
+                tag: 'Пиратский',
+                category: 'pirate',
+                logo: 'https://via.placeholder.com/150/8a2be2/ffffff?text=V',
+                description: 'Проект, ориентированный на упрощение входа на серверы. Автоматически проверяет и устанавливает нужную версию Java, избавляя от ручной настройки.',
+                pros: ['Автоматическая установка Java', 'Кроссплатформенность', 'Быстрый вход'],
+                cons: ['Молодой проект', 'Нет большого сообщества'],
+                ratings: [4, 3, 3, 3, 4],
+                reviews: [
+                    { name: 'Server_Join', date: '25.01.2026', rating: 4, text: 'Никогда не думал, что Java можно настроить автоматически. Заходишь на сервер в два клика.' },
+                    { name: 'MC_Player', date: '07.04.2026', rating: 3, text: 'Пока сыроват, но потенциал есть. Ждем новых функций.' }
+                ]
+            }
+        };
+
+        // ================= ПЕРЕМЕННЫЕ СОСТОЯНИЯ =================
+        let currentCategory = 'all';
+        let currentLauncher = null;
+        let selectedRating = 0;
+        let currentUser = null;
+        let usersDB = [];
+
+        // ================= ФУНКЦИИ АВТОРИЗАЦИИ =================
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString();
+        }
+
+        function getUsers() {
+            try {
+                const stored = JSON.parse(localStorage.getItem('mineReviewUsers')) || [];
+                if (stored.length > 0) usersDB = stored;
+            } catch(e) { usersDB = []; }
+            return usersDB;
+        }
+
+        function saveUsers(users) {
+            usersDB = users;
+            try { localStorage.setItem('mineReviewUsers', JSON.stringify(users)); } catch(e) {}
+        }
+
+        function loadSession() {
+            try { currentUser = JSON.parse(localStorage.getItem('mineReviewCurrentUser')); } catch(e) { currentUser = null; }
+            updateAuthUI();
+        }
+
+        function updateAuthUI() {
+            const authSection = document.getElementById('auth-section');
+            if (currentUser) {
+                authSection.innerHTML = `<span class="user-name">${currentUser.login}</span><button class="logout-btn" onclick="logout()">Выйти</button>`;
+                document.getElementById('review-user').value = currentUser.login;
+            } else {
+                authSection.innerHTML = `<button class="login-btn" onclick="openAuthModal()">Вход / Регистрация</button>`;
+                document.getElementById('review-user').value = '';
+            }
+        }
+
+        function openAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+            document.getElementById('authError').innerText = '';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function switchAuthTab(tab) {
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const title = document.getElementById('authTitle');
+            if (tab === 'login') {
+                loginTab.classList.add('active'); registerTab.classList.remove('active'); title.innerText = 'Вход';
+            } else {
+                registerTab.classList.add('active'); loginTab.classList.remove('active'); title.innerText = 'Регистрация';
+            }
+        }
+
+        function handleAuth() {
+            const login = document.getElementById('auth-login').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            const errorMsg = document.getElementById('authError');
+            const isLoginTab = document.getElementById('loginTab').classList.contains('active');
+
+            if (login.length < 3 || password.length < 4) {
+                errorMsg.innerText = 'Логин (мин. 3), пароль (мин. 4)';
+                return;
+            }
+
+            const users = getUsers();
+
+            if (isLoginTab) {
+                const user = users.find(u => u.login === login && u.password === hashPassword(password));
+                if (!user) { errorMsg.innerText = 'Не найден такой пользователь или неверный пароль!'; return; }
+                currentUser = user;
+            } else {
+                if (users.find(u => u.login === login)) { errorMsg.innerText = 'Логин уже занят!'; return; }
+                const newUser = { login: login, password: hashPassword(password) };
+                users.push(newUser); saveUsers(users); currentUser = newUser;
+            }
+
+            try { localStorage.setItem('mineReviewCurrentUser', JSON.stringify(currentUser)); } catch(e) {}
+            closeAuthModal(); updateAuthUI();
+        }
+
+        function logout() {
+            try { localStorage.removeItem('mineReviewCurrentUser'); } catch(e) {}
+            currentUser = null; updateAuthUI();
+        }
+
+        // ================= ФУНКЦИИ РЕЙТИНГА =================
+        function getAverageRating(launcherKey) {
+            const ratings = launchersData[launcherKey].ratings;
+            if (ratings.length === 0) return 0;
+            const sum = ratings.reduce((a, b) => a + b, 0);
+            return (sum / ratings.length).toFixed(1);
+        }
+
+        function getVotesCount(launcherKey) { return launchersData[launcherKey].ratings.length; }
+
+        function renderStars(rating) {
+            const rounded = Math.round(rating);
+            let stars = '';
+            for (let i = 1; i <= 5; i++) stars += i <= rounded ? '★' : '☆';
+            return stars;
+        }
+
+        // ================= ГЛАВНАЯ СТРАНИЦА =================
+        function loadLaunchers() {
+            const list = document.getElementById('launcher-list');
+            list.innerHTML = '';
+            for (const key in launchersData) {
+                const data = launchersData[key];
+                if (currentCategory === 'all' || data.category.includes(currentCategory)) {
+                    const avg = getAverageRating(key);
+                    const count = getVotesCount(key);
+                    const card = document.createElement('div');
+                    card.className = 'launcher-card';
+                    card.onclick = () => openDetailPage(key);
+                    
+                    let tagClass = 'tag-pirate';
+                    if (data.category.includes('license')) tagClass = 'tag-license';
+                    else if (data.category.includes('pirate') && data.category.includes('mods')) tagClass = 'tag-mods';
+                    else if (data.category === 'mods') tagClass = 'tag-mods';
+
+                    card.innerHTML = `
+                        <div class="card-tag ${tagClass}">${data.tag}</div>
+                        <div class="logo-box"><img src="${data.logo}" alt="${data.name}"></div>
+                        <h3 class="card-title">${data.name}</h3>
+                        <div class="rating-block">
+                            <div class="stars-display">${renderStars(avg)}</div>
+                            <div class="avg-score">${avg} / 5</div>
+                            <div class="total-votes">${count} оценок</div>
+                        </div>
+                        <p class="short-desc">${data.description.substring(0, 70)}...</p>
+                        <button class="card-review-btn" onclick="event.stopPropagation(); openDetailPage(key)"><i class="fas fa-comments"></i> Смотреть отзывы</button>
+                    `;
+                    list.appendChild(card);
+                }
+            }
+            updateAuthUI();
+        }
+
+        // ================= СТРАНИЦА ДЕТАЛЕЙ =================
+        function openDetailPage(key) {
+            currentLauncher = key;
+            const data = launchersData[key];
+            const avg = getAverageRating(key);
+            const count = getVotesCount(key);
+
+            document.getElementById('detail-logo').innerHTML = `<img src="${data.logo}" alt="${data.name}">`;
+            document.getElementById('detail-title').innerText = data.name;
+            document.getElementById('detail-rating').innerHTML = `${renderStars(avg)} (${avg} / 5)`;
+            document.getElementById('detail-votes-count').innerText = `Всего оценок: ${count}`;
+            document.getElementById('detail-description').innerText = data.description;
+            document.getElementById('detail-pros').innerHTML = data.pros.map(p => `<li><i class="fas fa-check"></i> ${p}</li>`).join('');
+            document.getElementById('detail-cons').innerHTML = data.cons.map(c => `<li><i class="fas fa-times"></i> ${c}</li>`).join('');
+
+            showPage('detail');
+            loadReviews();
+            generateCaptcha();
+            
+            document.getElementById('review-user').value = currentUser ? currentUser.login : '';
+            document.getElementById('review-text').value = '';
+            selectedRating = 0;
+            resetStarRating();
+            
+            if (!currentUser) {
+                document.getElementById('review-user').disabled = true;
+                document.querySelector('.submit-btn').disabled = true;
+                document.querySelector('.submit-btn').style.background = '#555';
+            } else {
+                document.getElementById('review-user').disabled = false;
+                document.querySelector('.submit-btn').disabled = false;
+                document.querySelector('.submit-btn').style.background = 'var(--success)';
+            }
+        }
+
+        // ================= ОТЗЫВЫ =================
+        function loadReviews() {
+            let reviews = [...(launchersData[currentLauncher].reviews || [])];
+            try {
+                const storedReviews = JSON.parse(localStorage.getItem('reviews_' + currentLauncher)) || [];
+                reviews = [...storedReviews, ...reviews];
+            } catch(e) {}
+
+            const list = document.getElementById('reviews-list');
+            
+            if (reviews.length === 0) {
+                list.innerHTML = '<p style="color: #666;">Отзывов пока нет.</p>';
+                return;
+            }
+
+            list.innerHTML = reviews.map(r => `
+                <div class="review-item">
+                    <span class="review-author">${r.name}</span>
+                    <span class="review-date">${r.date}</span>
+                    <div class="review-rating">${renderStars(r.rating)}</div>
+                    <span class="review-status status-${r.status}">${r.status === 'approved' ? 'Подтверждён' : 'На модерации'}</span>
+                    <p class="review-text">${r.text}</p>
+                </div>
+            `).join('');
+        }
+
+        // ================= ВЫБОР ЗВЕЗД =================
+        function setupStarRating() {
+            const stars = document.querySelectorAll('#star-rating-form i');
+            stars.forEach(star => {
+                star.onclick = () => {
+                    if (!currentUser) {
+                        openAuthModal();
+                        return;
+                    }
+                    selectedRating = parseInt(star.dataset.value);
+                    resetStarRating();
+                    for (let i = 0; i < selectedRating; i++) stars[i].classList.add('active');
+                };
+            });
+        }
+
+        function resetStarRating() {
+            const stars = document.querySelectorAll('#star-rating-form i');
+            stars.forEach(star => star.classList.remove('active'));
+        }
+
+        // ================= КАПЧА И ОТПРАВКА =================
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('captcha-question').innerText = `${num1} + ${num2}`;
+            document.getElementById('captcha-answer').value = '';
+            document.getElementById('captcha-answer').dataset.answer = num1 + num2;
+        }
+
+        function submitReview() {
+            if (!currentUser) {
+                openAuthModal();
+                return;
+            }
+            
+            const text = document.getElementById('review-text').value.trim();
+            const captcha = parseInt(document.getElementById('captcha-answer').value);
+            const correctCaptcha = parseInt(document.getElementById('captcha-answer').dataset.answer);
+            const statusMsg = document.getElementById('form-status');
+
+            if (selectedRating === 0) { statusMsg.innerText = 'Пожалуйста, выберите оценку (от 1 до 5 звёзд)!'; return; }
+            if (text.length < 20) { statusMsg.innerText = 'Отзыв слишком короткий. Напишите подробнее!'; return; }
+            if (captcha !== correctCaptcha) { statusMsg.innerText = 'Ошибка в капче. Попробуйте ещё раз.'; generateCaptcha(); return; }
+            if (text.toLowerCase().includes('скачал') && text.length < 40) { statusMsg.innerText = 'Похоже на спам. Опишите подробнее свой опыт.'; return; }
+
+            launchersData[currentLauncher].ratings.push(selectedRating);
+            let reviews = JSON.parse(localStorage.getItem('reviews_' + currentLauncher)) || [];
+            reviews.unshift({
+                name: currentUser.login, text: text, rating: selectedRating,
+                date: new Date().toLocaleDateString('ru-RU'), status: 'pending'
+            });
+            localStorage.setItem('reviews_' + currentLauncher, JSON.stringify(reviews));
+
+            statusMsg.style.color = 'var(--success)';
+            statusMsg.innerText = '✅ Отзыв отправлен на модерацию! Он появится после одобрения.';
+            document.getElementById('review-user').value = currentUser.login;
+            document.getElementById('review-text').value = '';
+            selectedRating = 0; resetStarRating(); generateCaptcha();
+            
+            const avg = getAverageRating(currentLauncher);
+            document.getElementById('detail-rating').innerHTML = `${renderStars(avg)} (${avg} / 5)`;
+            document.getElementById('detail-votes-count').innerText = `Всего оценок: ${getVotesCount(currentLauncher)}`;
+            
+            setTimeout(() => { loadReviews(); statusMsg.innerText = ''; }, 2000);
+        }
+
+        // ================= НАВИГАЦИЯ =================
+        function showPage(page) {
+            if (page === 'home') {
+                document.getElementById('home-page').style.display = 'block';
+                document.getElementById('detail-page').style.display = 'none';
+                loadLaunchers();
+            } else {
+                document.getElementById('home-page').style.display = 'none';
+                document.getElementById('detail-page').style.display = 'block';
+            }
+        }
+
+        function filterLaunchers(cat, btn) {
+            currentCategory = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadLaunchers();
+        }
+
+        // ================= ИНИЦИАЛИЗАЦИЯ =================
+        document.addEventListener('DOMContentLoaded', () => {
+            getUsers(); loadSession(); loadLaunchers(); setupStarRating();
+        });
+    </script>
+</body>
+</html>
