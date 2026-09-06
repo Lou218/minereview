@@ -151,7 +151,7 @@
             justify-content: center;
         }
 
-        .logo-box img { width: 100%; height: 100%; object-fit: contain; }
+        .logo-box img { width: 100%; height: 100%; object-fit: contain; background: white; }
 
         .card-title { text-align: center; margin-bottom: 5px; }
         
@@ -211,6 +211,11 @@
             background: var(--accent-light);
         }
 
+        .card-review-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+
         #detail-page {
             display: none;
             max-width: 900px;
@@ -245,7 +250,7 @@
             border: 3px solid var(--accent);
         }
 
-        .detail-logo img { width: 100%; height: 100%; object-fit: contain; }
+        .detail-logo img { width: 100%; height: 100%; object-fit: contain; background: white; }
 
         .detail-title { font-size: 2.5rem; margin-bottom: 10px; }
 
@@ -567,13 +572,37 @@
     </footer>
 
     <script>
+        // ===== БЕЗОПАСНЫЕ ССЫЛКИ НА ЛОГОТИПЫ (вшиты в код, не зависят от интернета) =====
+        // Для отображения в любом окружении используем SVG с эмодзи/цветами в качестве fallback
+        const imgPlaceholder = (bg, text) => `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='${bg}'/><text x='50' y='55' font-size='30' text-anchor='middle' fill='white'>${text}</text></svg>`;
+        
+        const logos = {
+            official: imgPlaceholder('green', 'M'), // Крипер
+            zlauncher: imgPlaceholder('brown', 'Z'), // Z
+            legacy: imgPlaceholder('black', 'L'), // Legacy
+            tl: imgPlaceholder('blue', 'TL'), // TL
+            modrinth: imgPlaceholder('green', 'M'), // Modrinth
+            prism: imgPlaceholder('purple', 'P'), // Prism
+            multimc: imgPlaceholder('green', 'M'), // MultiMC
+            kl: imgPlaceholder('red', 'KL'), // KL
+            xmcl: imgPlaceholder('purple', 'X'), // XMCL
+            mister: imgPlaceholder('darkgreen', 'M'), // Mister
+            xlauncher: imgPlaceholder('dark', 'X'), // XLauncher
+            sk: imgPlaceholder('purple', 'SK'), // SK
+            hmcl: imgPlaceholder('brown', 'H'), // HMCL
+            flauncher: imgPlaceholder('gradient', 'FL'), // FLauncher
+            nlauncher: imgPlaceholder('gray', 'N'), // NLauncher
+            rulauncher: imgPlaceholder('darkblue', 'Ru'), // RuLauncher
+            vlauncher: imgPlaceholder('purple', 'V') // VLauncher
+        };
+
         // ================= ДАННЫЕ С РЕАЛЬНЫМИ ОТЗЫВАМИ =================
         const launchersData = {
             'official': {
                 name: 'Official Launcher',
                 tag: 'Лицензия',
                 category: 'license',
-                logo: 'https://i.ibb.co/9Y0fL7G/modrinth.png', // ЗАМЕНИТЬ на картинку крипера (ты её не загрузил на внешний хостинг, используем временную)
+                logo: logos.official,
                 description: 'Официальный лаунчер от Mojang Studios. Бесплатен для скачивания, но требует покупки лицензии для игры. Поддерживает все версии, включает Java и Bedrock. Идеален для ванильной игры и лёгкого моддинга.',
                 pros: ['Официальная поддержка и обновления', 'Полная поддержка всех версий игры', 'Самый безопасный вариант'],
                 cons: ['Нет встроенной поддержки модпаков', 'Слабое управление экземплярами игры'],
@@ -587,7 +616,7 @@
                 name: 'ZLauncher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://i.ibb.co/xg03kKZ/zlauncher.png', // ZLauncher (твоя 2 картинка)
+                logo: logos.zlauncher,
                 description: 'Бесплатный пиратский лаунчер, позволяющий играть в Minecraft без лицензии. Поддерживает скины через ely.by и включает множество популярных сборок. Иногда сталкивается с блокировками некоторых сайтов.',
                 pros: ['Бесплатный вход без лицензии', 'Поддержка скинов ely.by', 'Много встроенных сборок'],
                 cons: ['Иногда ломается после обновлений', 'Сомнительная репутация в некоторых сообществах'],
@@ -601,7 +630,7 @@
                 name: 'Legacy Launcher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://i.ibb.co/8Y9sP5r/legacy.png',
+                logo: logos.legacy,
                 description: 'Прямой наследник TLauncher, созданный как безопасная и чистая альтернатива. Поддерживает все версии игры, автоматическую установку Forge, Fabric и OptiFine, а также скины ely.by. Полностью бесплатный, без рекламы.',
                 pros: ['Бесплатный и безопасный', 'Поддержка Forge, Fabric, OptiFine', 'Скины через ely.by'],
                 cons: ['Официальная поддержка сворачивается', 'Устаревший интерфейс'],
@@ -616,7 +645,7 @@
                 name: 'TL Launcher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://i.ibb.co/tB6YydL/tl.png',
+                logo: logos.tl,
                 description: 'Классический лаунчер для игры на пиратских и лицензионных аккаунтах. Работает на Windows, macOS и Linux. Поддерживает установку Forge, OptiFine и скины ely.by.',
                 pros: ['Поддержка пираток и лицензии', 'Кроссплатформенность', 'Простой вход на сервера'],
                 cons: ['Риск фейковых сайтов', 'Жалобы на скрытые процессы'],
@@ -630,7 +659,7 @@
                 name: 'Modrinth App',
                 tag: 'Лицензия',
                 category: 'license mods',
-                logo: 'https://i.ibb.co/9Y0fL7G/modrinth.png',
+                logo: logos.modrinth,
                 description: 'Официальный лаунчер от платформы Modrinth. Специализируется на удобном поиске и автоматической установке модов, модпаков и шейдеров. Сейчас находится в стадии публичной беты.',
                 pros: ['Официальный и безопасный', 'Огромная библиотека модов', 'Автоматическая установка модпаков'],
                 cons: ['Бета-версия', 'Нет поддержки серверов'],
@@ -644,7 +673,7 @@
                 name: 'Prism Launcher',
                 tag: 'Для модов',
                 category: 'license mods',
-                logo: 'https://i.ibb.co/jHc2h8B/prism.png',
+                logo: logos.prism,
                 description: 'Открытый «золотой стандарт» для моддинга. Позволяет создавать изолированные инстансы, где отдельно хранятся моды, миры и настройки Java. Дает полный контроль над игрой и имеет встроенную поддержку Modrinth и CurseForge.',
                 pros: ['Открытый исходный код', 'Полный контроль над инстансами', 'Встроенная поддержка модпаков', 'Без рекламы'],
                 cons: ['Сложный интерфейс для новичков', 'Требует ручной настройки некоторых функций'],
@@ -658,7 +687,7 @@
                 name: 'MultiMC',
                 tag: 'Для модов',
                 category: 'license mods',
-                logo: 'https://i.ibb.co/xLGXYkH/multimc.png',
+                logo: logos.multimc,
                 description: 'Классический лаунчер для энтузиастов моддинга. Предоставляет полный контроль над всеми аспектами игры, позволяя создавать отдельные профили с разными версиями Java и модами.',
                 pros: ['Открытый исходный код', 'Полный контроль над инстансами'],
                 cons: ['Сложный интерфейс', 'Нет автоматических обновлений модов'],
@@ -672,7 +701,7 @@
                 name: 'KLauncher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://i.ibb.co/Ny0yG6p/kl.png',
+                logo: logos.kl,
                 description: 'Пиратский лаунчер с бесплатными HD-скинами. Имеет серьезные претензии по безопасности (риск кражи аккаунтов и вирусов) и проблемы с шейдерами на старых версиях игры. Поддерживает Windows, Linux и MacOS.',
                 pros: ['Бесплатные HD-скины', 'Кроссплатформенность (Win, Linux, MacOS)'],
                 cons: ['Высокий риск кражи аккаунтов', 'Много рекламы и угроз заражения', 'Проблемы с шейдерами на старых версиях'],
@@ -686,7 +715,7 @@
                 name: 'XMCL (X Minecraft Launcher)',
                 tag: 'Для модов',
                 category: 'license mods pirate',
-                logo: 'https://via.placeholder.com/150/8a2be2/ffffff?text=XMCL',
+                logo: logos.xmcl,
                 description: 'Современный лаунчер с открытым исходным кодом (Electron). Поддерживает Windows, macOS и Linux. Отличается современным UI, быстрой загрузкой и возможностью устанавливать моды и модпаки напрямую из CurseForge и Modrinth.',
                 pros: ['Современный и быстрый интерфейс', 'Встроенная поддержка CurseForge и Modrinth', 'Поддержка нескольких аккаунтов и серверов', 'Кроссплатформенность'],
                 cons: ['Требует много ресурсов (Electron)', 'Некоторые пользователи жалуются на нестабильность'],
@@ -700,7 +729,7 @@
                 name: 'MisterLauncher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://i.ibb.co/9q8xr2R/mister.png',
+                logo: logos.mister,
                 description: 'Лаунчер, который часто обсуждают на форумах. По отзывам пользователей, его советуют отправлять «в помойку» из-за множества проблем, хотя он позволяет запускать разные версии игры.',
                 pros: ['Возможность запуска разных версий', 'Встроенный мониторинг серверов'],
                 cons: ['Крайне негативные отзывы пользователей', 'Проблемы с аккаунтами'],
@@ -714,7 +743,7 @@
                 name: 'XLauncher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://i.ibb.co/5Gj5ZS4/xlauncher.png',
+                logo: logos.xlauncher,
                 description: 'Пиратский лаунчер, который популярен у школьников из-за того, что его можно установить в обход школьных блокировок (его не палит Ростелеком).',
                 pros: ['Возможность обхода некоторых блокировок', 'Наличие модов'],
                 cons: ['Сомнительная репутация', 'Риск столкнуться с вирусами'],
@@ -728,7 +757,7 @@
                 name: 'SKLauncher',
                 tag: 'Пиратский',
                 category: 'pirate mods',
-                logo: 'https://i.ibb.co/2dWvsXm/sk.png',
+                logo: logos.sk,
                 description: 'Чистый и максимально приближенный к официальному виду лаунчер для игры без лицензии. Позволяет устанавливать модпаки и считается одним из лучших безопасных решений для пираток. Иногда антивирусы дают ложные срабатывания.',
                 pros: ['Очень чистый и без рекламы', 'Установка модпаков', 'Удобная система скинов'],
                 cons: ['Ложные срабатывания антивирусов', 'Меньше известен в СНГ'],
@@ -742,7 +771,7 @@
                 name: 'HMCL (Hello Minecraft! Launcher)',
                 tag: 'Лицензия / Для модов',
                 category: 'license mods',
-                logo: 'https://i.ibb.co/DM07G55/hmcl.png',
+                logo: logos.hmcl,
                 description: 'Один из самых мощных и популярных открытых лаунчеров. Полностью кроссплатформенный (Windows, macOS, Linux, FreeBSD, ARM, RISC-V). Поддерживает все основные загрузчики модов и интеграцию с CurseForge/Modrinth. Огромное сообщество и стабильность.',
                 pros: ['Полностью открытый исходный код', 'Огромный выбор загрузчиков (Forge, Fabric, NeoForge и др.)', 'Кроссплатформенность (даже для ARM)', 'Встроенная интеграция модпаков'],
                 cons: ['Сложноват для новичков', 'Требует Java для запуска'],
@@ -756,7 +785,7 @@
                 name: 'FLauncher',
                 tag: 'Пиратский',
                 category: 'pirate mods',
-                logo: 'https://i.ibb.co/L9ZH84M/flauncher.png',
+                logo: logos.flauncher,
                 description: 'Популярный пиратский лаунчер, который часто советуют как альтернативу TLauncher. Отличается стильным интерфейсом и наличием встроенных читов.',
                 pros: ['Удобный интерфейс', 'Установка модов и читов в один клик', 'Обширная коллекция сборок'],
                 cons: ['Является нелицензионным ПО', 'Использование может нарушать правила серверов'],
@@ -770,7 +799,7 @@
                 name: 'NLauncher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://via.placeholder.com/150/cccccc/000000?text=N',
+                logo: logos.nlauncher,
                 description: 'Менее известный лаунчер. Судя по обсуждениям на форумах, он упоминается редко, но иногда попадается в списках альтернатив. Информации о его функционале крайне мало.',
                 pros: ['Может быть использован как запасной вариант'],
                 cons: ['Мало информации о функционале', 'Очень низкая узнаваемость'],
@@ -783,7 +812,7 @@
                 name: 'RuLauncher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://via.placeholder.com/150/008080/ffffff?text=Ru',
+                logo: logos.rulauncher,
                 description: 'Русскоязычный бесплатный лаунчер. Получил популярность благодаря поддержке скинов ely.by, удобному интерфейсу и возможности держать несколько сборок в отдельных папках.',
                 pros: ['Удобный интерфейс', 'Поддержка ely.by', 'Мультисборки'],
                 cons: ['Нестабильность функций', 'Неудобная установка модов'],
@@ -797,7 +826,7 @@
                 name: 'VLauncher',
                 tag: 'Пиратский',
                 category: 'pirate',
-                logo: 'https://via.placeholder.com/150/8a2be2/ffffff?text=V',
+                logo: logos.vlauncher,
                 description: 'Проект, ориентированный на упрощение входа на серверы. Автоматически проверяет и устанавливает нужную версию Java, избавляя от ручной настройки.',
                 pros: ['Автоматическая установка Java', 'Кроссплатформенность', 'Быстрый вход'],
                 cons: ['Молодой проект', 'Нет большого сообщества'],
@@ -816,6 +845,15 @@
         let currentUser = null;
         let usersDB = [];
 
+        // ================= БЕЗОПАСНЫЙ LOCALSTORAGE =================
+        function safeGet(key) {
+            try { return JSON.parse(localStorage.getItem(key)); } catch(e) { return null; }
+        }
+
+        function safeSet(key, value) {
+            try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
+        }
+
         // ================= ФУНКЦИИ АВТОРИЗАЦИИ =================
         function hashPassword(password) {
             let hash = 0;
@@ -828,20 +866,18 @@
         }
 
         function getUsers() {
-            try {
-                const stored = JSON.parse(localStorage.getItem('mineReviewUsers')) || [];
-                if (stored.length > 0) usersDB = stored;
-            } catch(e) { usersDB = []; }
+            const stored = safeGet('mineReviewUsers');
+            if (stored && stored.length > 0) return stored;
             return usersDB;
         }
 
         function saveUsers(users) {
             usersDB = users;
-            try { localStorage.setItem('mineReviewUsers', JSON.stringify(users)); } catch(e) {}
+            safeSet('mineReviewUsers', users);
         }
 
         function loadSession() {
-            try { currentUser = JSON.parse(localStorage.getItem('mineReviewCurrentUser')); } catch(e) { currentUser = null; }
+            currentUser = safeGet('mineReviewCurrentUser');
             updateAuthUI();
         }
 
@@ -899,12 +935,12 @@
                 users.push(newUser); saveUsers(users); currentUser = newUser;
             }
 
-            try { localStorage.setItem('mineReviewCurrentUser', JSON.stringify(currentUser)); } catch(e) {}
+            safeSet('mineReviewCurrentUser', currentUser);
             closeAuthModal(); updateAuthUI();
         }
 
         function logout() {
-            try { localStorage.removeItem('mineReviewCurrentUser'); } catch(e) {}
+            safeSet('mineReviewCurrentUser', null);
             currentUser = null; updateAuthUI();
         }
 
@@ -984,7 +1020,8 @@
             document.getElementById('review-text').value = '';
             selectedRating = 0;
             resetStarRating();
-            
+
+            // Если пользователь не залогинен, блокируем форму
             if (!currentUser) {
                 document.getElementById('review-user').disabled = true;
                 document.querySelector('.submit-btn').disabled = true;
@@ -1000,8 +1037,8 @@
         function loadReviews() {
             let reviews = [...(launchersData[currentLauncher].reviews || [])];
             try {
-                const storedReviews = JSON.parse(localStorage.getItem('reviews_' + currentLauncher)) || [];
-                reviews = [...storedReviews, ...reviews];
+                const storedReviews = safeGet('reviews_' + currentLauncher);
+                if (storedReviews) reviews = [...storedReviews, ...reviews];
             } catch(e) {}
 
             const list = document.getElementById('reviews-list');
@@ -1069,12 +1106,12 @@
             if (text.toLowerCase().includes('скачал') && text.length < 40) { statusMsg.innerText = 'Похоже на спам. Опишите подробнее свой опыт.'; return; }
 
             launchersData[currentLauncher].ratings.push(selectedRating);
-            let reviews = JSON.parse(localStorage.getItem('reviews_' + currentLauncher)) || [];
+            let reviews = safeGet('reviews_' + currentLauncher) || [];
             reviews.unshift({
                 name: currentUser.login, text: text, rating: selectedRating,
                 date: new Date().toLocaleDateString('ru-RU'), status: 'pending'
             });
-            localStorage.setItem('reviews_' + currentLauncher, JSON.stringify(reviews));
+            safeSet('reviews_' + currentLauncher, reviews);
 
             statusMsg.style.color = 'var(--success)';
             statusMsg.innerText = '✅ Отзыв отправлен на модерацию! Он появится после одобрения.';
